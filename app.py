@@ -10,6 +10,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# code to handle the main page and file uploads
 @app.route('/', methods=['GET', 'POST'])
 def index():
     results = None
