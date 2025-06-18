@@ -1,5 +1,5 @@
 
-from sklearn.linear_model import LinearRegression, Ridge, Lasso, LogisticRegression
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR
