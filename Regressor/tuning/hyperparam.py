@@ -1,15 +1,15 @@
 from models.trainer import get_model
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import numpy as np
 def hyperparams(model):
     if model == 'LinearRegression()':
         param_grid = {
     'copy_X': [True, False],
     'fit_intercept': [True, False],
-    'n_jobs': [None, -1, 1],  # -1 means use all processors
+    'n_jobs': [None, -1, 1],  
     'positive': [True, False],
-    'tol': [1e-6, 1e-4, 1e-2, 1e-1, 1.0]
+    'tol': [1e-6, 1e-4, 1e-2, 1e-1, 1.0],
     }
         return param_grid
     
@@ -19,9 +19,9 @@ def hyperparams(model):
     'copy_X': [True, False],                        # Whether to copy input X
     'fit_intercept': [True, False],                 # Whether to fit intercept
     'max_iter': [None, 100, 500, 1000, 5000],        # Max number of iterations for solvers
-    'positive': [True, False],                      # Force coefficients to be positive
+    'positive': [False],                      # Force coefficients to be positive
     'random_state': [None, 42],                     # For reproducibility
-    'solver': ['auto', 'svd', 'cholesky', 'lsqr', 'sparse_cg', 'sag', 'saga', 'lbfgs'],  # Optimization algorithms
+    'solver': ['auto', 'svd', 'cholesky', 'lsqr', 'sparse_cg'],  # Optimization algorithms
     'tol': [1e-6, 1e-4, 1e-2, 1e-1]                 # Convergence tolerance
     }
 
@@ -143,21 +143,26 @@ def visualize_results(search_obj, param_name):
     
 import json
 
-def logger(model_name: str, best_params, best_score=None, save_path=None):
+def log_tuning_results(model_name: str, best_params, metric_logs, number_of_logs = 5, best_score=None, save_path=None):
+    """
+    Logs the tuning results to a JSON file and prints a summary. Include model metrics for each iteration
+    """
+    trimmed_logs = metric_logs[:number_of_logs]
+
     log = {
-        'model': model_name,
-        'best_params': best_params
-    }
+    'model': model_name,
+    'best_params': best_params,
+    'metric_logs': trimmed_logs
+}
+
     if best_score is not None:
         log['best_score'] = best_score
-
-    print(f"Tuning Summary for {model_name}")
-    print(json.dumps(log, indent=4))
-
+# Save
     if save_path:
-        with open(save_path, 'w') as f:
-            json.dump(log, f, indent=4)
-        print(f"\n Log saved to: {save_path}")
+        pd.DataFrame(metric_logs).to_csv(save_path, index=False)
+        print(f"\nFull metrics saved to: {save_path}")
+
+    return np.array(log)
 
 
 
